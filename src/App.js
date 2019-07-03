@@ -17,7 +17,7 @@ class App extends Component {
   componentDidMount() {
     const { snake } = this.state;
     snake.forEach(this.drawSnake);
-    // this.movingSlow();
+    this.movingSlow();
   }
   movingSlow() {
     const { snake } = this.state;

@@ -11,7 +11,6 @@ class App extends Component {
         { x: 130, y: 150 },
         { x: 120, y: 150 }
       ]
-
     }
   }
   componentDidMount() {

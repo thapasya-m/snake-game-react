@@ -5,27 +5,61 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      key: {
+        left: 37,
+        up: 38,
+        right: 39,
+        down: 40
+      },
       snake: [
         { x: 150, y: 150 },
         { x: 140, y: 150 },
         { x: 130, y: 150 },
         { x: 120, y: 150 }
-      ]
+      ],
+      nextPosition: {
+        x: -10,
+        y: 0
+      }
     }
   }
   componentDidMount() {
-    const { snake } = this.state;
-    snake.forEach(this.drawSnake);
+    document.addEventListener("keydown", this.directionKeyPressed)
     this.movingSlow();
   }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.directionKeyPressed)
+  }
+  directionKeyPressed = (e) => {
+    const { key } = this.state
+    let _nextPosition = {}
+    const keyPressed = e.keyCode
+    switch (keyPressed) {
+      case key.left:
+        _nextPosition = { x: -10, y: 0 }
+        this.setState({ nextPosition: _nextPosition })
+        break;
+      case key.up:
+        _nextPosition = { x: 0, y: -10 }
+        this.setState({ nextPosition: _nextPosition })
+        break;
+      case key.right:
+        _nextPosition = { x: 10, y: 0 }
+        this.setState({ nextPosition: _nextPosition })
+        break;
+      case key.down:
+        _nextPosition = { x: 0, y: 10 }
+        this.setState({ nextPosition: _nextPosition })
+        break;
+    }
+  }
   movingSlow() {
-    const { snake } = this.state;
+    const { snake, nextPosition } = this.state;
     setTimeout(() => {
       this.clearCanvas()
-      // this.moveSnake({ x: 0, y: -10 });
-      this.moveSnake({ x: 0, y: -10 });
+      this.moveSnake(nextPosition);
       snake.forEach(this.drawSnake);
-      this.movingSlow()
+      this.movingSlow(nextPosition)
     }, 1000);
   }
   clearCanvas() {
@@ -44,9 +78,9 @@ class App extends Component {
     }
     snake.unshift(head);
     snake.pop();
-    this.setState({
-      snake: snake
-    })
+    // this.setState({
+    //   snake: snake
+    // })
   }
   drawSnake(snakePart) {
     const canvas = document.getElementById("snake_board")
@@ -58,16 +92,16 @@ class App extends Component {
     }
   }
   render() {
+
     return (
-      <div className="App" >
+      <div className="App">
         <header className="">
           Snake game
-      </header>
+        </header>
         <canvas
           style={{ border: "1px solid black" }}
           id="snake_board" width="300" height="300">
-          current stock price: $3.15 + 0.15
-      </canvas>
+        </canvas>
         <aside>Score: 0</aside>
       </div>
     );

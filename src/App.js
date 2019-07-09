@@ -17,7 +17,7 @@ class App extends Component {
         { x: 130, y: 150 },
         { x: 120, y: 150 }
       ],
-      nextPosition: {
+      currentDirection: {
         x: -10,
         y: 0
       }
@@ -30,37 +30,52 @@ class App extends Component {
   componentWillUnmount() {
     document.removeEventListener("keydown", this.directionKeyPressed)
   }
+  isNextStepAllowed(_nextDirection) {
+    const previousDirection = this.state.currentDirection
+    if (Math.abs(previousDirection.x) === Math.abs(_nextDirection.x)) {
+      return false
+    }
+    return true
+  }
   directionKeyPressed = (e) => {
     const { key } = this.state
-    let _nextPosition = {}
+    let _nextDirection = {}
     const keyPressed = e.keyCode
     switch (keyPressed) {
       case key.left:
-        _nextPosition = { x: -10, y: 0 }
-        this.setState({ nextPosition: _nextPosition })
+        _nextDirection = { x: -10, y: 0 }
+        if (this.isNextStepAllowed(_nextDirection)) {
+          this.setState({ currentDirection: _nextDirection })
+        }
         break;
       case key.up:
-        _nextPosition = { x: 0, y: -10 }
-        this.setState({ nextPosition: _nextPosition })
+        _nextDirection = { x: 0, y: -10 }
+        if (this.isNextStepAllowed(_nextDirection)) {
+          this.setState({ currentDirection: _nextDirection })
+        }
         break;
       case key.right:
-        _nextPosition = { x: 10, y: 0 }
-        this.setState({ nextPosition: _nextPosition })
+        _nextDirection = { x: 10, y: 0 }
+        if (this.isNextStepAllowed(_nextDirection)) {
+          this.setState({ currentDirection: _nextDirection })
+        }
         break;
       case key.down:
-        _nextPosition = { x: 0, y: 10 }
-        this.setState({ nextPosition: _nextPosition })
+        _nextDirection = { x: 0, y: 10 }
+        if (this.isNextStepAllowed(_nextDirection)) {
+          this.setState({ currentDirection: _nextDirection })
+        }
         break;
     }
   }
   movingSlow() {
-    const { snake, nextPosition } = this.state;
+    const { snake, currentDirection } = this.state;
     setTimeout(() => {
       this.clearCanvas()
-      this.moveSnake(nextPosition);
+      this.moveSnake(currentDirection);
       snake.forEach(this.drawSnake);
-      this.movingSlow(nextPosition)
-    }, 1000);
+      this.movingSlow()
+    }, 100);
   }
   clearCanvas() {
     const canvas = document.getElementById("snake_board")

@@ -23,6 +23,8 @@ class App extends Component {
         x: -10,
         y: 0
       },
+      context: "",
+      canvas: "",
       frogPosition: {
         x: 0,
         y: 0
@@ -32,6 +34,12 @@ class App extends Component {
   }
   componentDidMount() {
     document.addEventListener("keydown", this.directionKeyPressed)
+    const canvas = document.getElementById("snake_board")
+    const context = canvas.getContext("2d")
+    this.setState({
+      context: context,
+      canvas: canvas
+    })
     this.createFrog();
     this.movingSlow();
   }
@@ -77,10 +85,10 @@ class App extends Component {
     }
   }
   movingSlow() {
-    const { currentDirection } = this.state;
+    const { currentDirection, frogPosition } = this.state;
     setTimeout(() => {
       this.clearCanvas();
-      this.drawFrog();
+      this.justDraw(frogPosition, "green");
       if (!this.didSnakeDie()) {
         this.moveSnake(currentDirection);
         this.drawSnake();
@@ -92,20 +100,24 @@ class App extends Component {
         }
       }
 
-    }, 100);
+    }, 300);
   }
   drawSnake() {
     const { snake } = this.state
-    snake.forEach(this.drawSnakePart);
+    for (let i = 0; i < snake.length; i++) {
+      this.justDraw(snake[i], "red")
+    }
     this.drawBoard();
   }
   clearCanvas() {
-    const canvas = document.getElementById("snake_board"), { canvasWidth, canvasHeight } = this.state
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "white";
-    ctx.strokeStyle = "black";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    ctx.strokeRect(0, 0, canvasWidth, canvasHeight);
+    const { canvasWidth, canvasHeight, context } = this.state
+
+    if (context !== "") {
+      context.fillStyle = "white";
+      context.strokeStyle = "black";
+      context.fillRect(0, 0, canvasWidth, canvasHeight);
+      context.strokeRect(0, 0, canvasWidth, canvasHeight);
+    }
   }
   didSnakeDie() {
     const { snake, canvasHeight, canvasWidth } = this.state
@@ -115,9 +127,6 @@ class App extends Component {
         return true
       }
     }
-    // snake.forEach(function checkIfSnakeBite(part) {
-
-    // })
     if (head.x === 0 || head.x === canvasWidth - 10
       || head.y === 0 || head.y === canvasHeight - 10) {
       return true
@@ -144,7 +153,6 @@ class App extends Component {
     })
   }
   createFrog() {
-
     const { frogPosition, snake, canvasWidth, canvasHeight } = this.state
 
     frogPosition.x = Math.round((Math.random() * (canvasWidth - 10)) / 10) * 10;
@@ -158,19 +166,8 @@ class App extends Component {
         this.createFrog();
       }
     })
-    this.drawFrog();
+    this.justDraw(frogPosition, "green");
     this.drawBoard();
-  }
-  drawFrog() {
-    const { frogPosition } = this.state;
-    const canvas = document.getElementById("snake_board")
-    if (canvas.getContext) {
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = 'green'
-      ctx.fillRect(frogPosition.x, frogPosition.y, 10, 10)
-      ctx.strokeRect(frogPosition.x, frogPosition.y, 10, 10)
-    }
-
   }
   drawBoard() {
     const canvas = document.getElementById("snake_board"),
@@ -191,13 +188,13 @@ class App extends Component {
     context.stroke();
   }
 
-  drawSnakePart(snakePart) {
-    const canvas = document.getElementById("snake_board")
+  justDraw(coords, fillColor) {
+    const { canvas } = this.state;
     if (canvas.getContext) {
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = 'red'
-      ctx.fillRect(snakePart.x, snakePart.y, 10, 10)
-      ctx.strokeRect(snakePart.x, snakePart.y, 10, 10)
+      const context = canvas.getContext("2d")
+      context.fillStyle = fillColor
+      context.fillRect(coords.x, coords.y, 10, 10)
+      context.strokeRect(coords.x, coords.y, 10, 10)
     }
   }
   render() {

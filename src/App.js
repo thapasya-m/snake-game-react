@@ -120,24 +120,34 @@ class App extends Component {
     }
   }
   didSnakeDie() {
-    const { snake, canvasHeight, canvasWidth } = this.state
+    const { snake } = this.state
     const head = { x: snake[0].x, y: snake[0].y }
     for (let i = 4; i < snake.length; i++) {
       if (snake[i].x === head.x && snake[i].y === head.y) {
         return true
       }
     }
-    if (head.x === 0 || head.x === canvasWidth - 10
-      || head.y === 0 || head.y === canvasHeight - 10) {
-      return true
-    }
+    // if (didSnakeHitWall(head)) {
+    //   return true
+    // }
+
     return false
   }
+  didSnakeHitWall(coords) {
+    const { canvasHeight, canvasWidth } = this.state
+    if (coords.x === 0 || coords.x === canvasWidth - 10
+      || coords.y === 0 || coords.y === canvasHeight - 10) {
+      return true
+    }
+  }
+  getPosition(val, mod) {
+    return ((val % mod) + mod) % mod;
+  }
   moveSnake(headTo) {
-    const { snake, frogPosition } = this.state;
+    const { snake, frogPosition, canvasHeight, canvasWidth } = this.state;
     const head = {
-      x: snake[0].x + headTo.x,
-      y: snake[0].y + headTo.y
+      x: this.getPosition(snake[0].x + headTo.x, canvasWidth),
+      y: this.getPosition(snake[0].y + headTo.y, canvasHeight)
     }
     snake.unshift(head);
     if (head.x === frogPosition.x && head.y === frogPosition.y) {

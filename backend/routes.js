@@ -3,5 +3,6 @@ const api = express.Router();
 const controller = require('./controller');
 
 api.post("/signIn", controller.signInUser);
-// api.post("/newScore", controller.addNewScore)
+api.post("/score", controller.addNewScore)
+api.get("/score/:id/:emailId", controller.getScoreByUser)
 module.exports = api;

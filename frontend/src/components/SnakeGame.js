@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as config from '../settings'
 
 class SnakeGame extends Component {
     constructor(props) {
@@ -28,7 +29,8 @@ class SnakeGame extends Component {
                 x: 0,
                 y: 0
             },
-            score: 0
+            score: 0,
+            isPaused: false
         }
     }
     componentDidMount() {
@@ -51,6 +53,34 @@ class SnakeGame extends Component {
             return false
         }
         return true
+    }
+    storeScore() {
+        const user = localStorage.getItem("user");
+        if (user) {
+            const data = {
+                id: user.id,
+                emailId: user.emailId,
+                score: this.state.score
+            }
+            fetch(config.BASE_API + "/score",
+                {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then(response => {
+                    return response.json()
+                }).then(respJSON => {
+                    if (respJSON.msg) {
+                        alert("something went wrong");
+                        console.log(respJSON.msg);
+                    }
+                    if (respJSON.data) {
+                        this.props.addNewScore(respJSON.data)
+                    }
+                })
+        }
     }
     directionKeyPressed = (e) => {
         const { key } = this.state
@@ -86,21 +116,36 @@ class SnakeGame extends Component {
         }
     }
     movingSlow() {
-        const { currentDirection, frogPosition } = this.state;
+        const { currentDirection, frogPosition, isPaused } = this.state;
         setTimeout(() => {
             this.clearCanvas();
             this.justDraw(frogPosition, "green");
             if (!this.didSnakeDie()) {
-                this.moveSnake(currentDirection);
-                this.drawSnake();
-                this.movingSlow()
+                if (!isPaused) {
+                    this.moveSnake(currentDirection);
+                    this.drawSnake();
+                    this.movingSlow()
+                } else
+                    this.drawSnake();
             } else {
                 this.drawSnake();
+                if (this.state.score > 0)
+                    this.storeScore();
                 if (window.confirm("You lost with " + this.state.score + " point(s). Click ok to restart.")) {
-                    window.location.reload()
+                    this.setState({
+                        score: 0,
+                        snake: [
+                            { x: 150, y: 150 },
+                            { x: 140, y: 150 },
+                            { x: 130, y: 150 },
+                            { x: 120, y: 150 }
+                        ]
+                    });
+                    this.clearCanvas();
+                    this.createFrog();
+                    this.movingSlow();
                 }
             }
-
         }, 300);
     }
     drawSnake() {
@@ -128,8 +173,8 @@ class SnakeGame extends Component {
                 return true
             }
         }
-        // if (didSnakeHitWall(head)) {
-        //   return true
+        // if (this.didSnakeHitWall(head)) {
+        //     return true
         // }
 
         return false
@@ -209,17 +254,32 @@ class SnakeGame extends Component {
             context.strokeRect(coords.x, coords.y, 10, 10)
         }
     }
+    toggleGame = () => {
+        let _isPaused = this.state.isPaused
+        this.setState({
+            isPaused: !_isPaused
+        })
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if ((this.state.isPaused !== prevState.isPaused)
+            && !this.state.isPaused) {
+            this.movingSlow();
+        }
+    }
     render() {
+        const { isPaused, score } = this.state;
         return (
             <div className="col-8">
                 <header className="">
                     Snake game
-        </header>
+                </header>
                 <canvas
                     style={{ border: "1px solid black" }}
                     id="snake_board" width="300" height="300">
                 </canvas>
-                <aside>Score: {this.state.score}</aside>
+                <aside>Score: {score}</aside>
+                <button onClick={() => this.toggleGame()}>
+                    {!isPaused ? "Pause" : "Resume"}</button>
             </div>
         );
     }

@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import * as config from '../settings'
+import Moment from 'react-moment';
+
 class UserPortal extends Component {
     constructor(props) {
         super(props)
@@ -9,11 +11,13 @@ class UserPortal extends Component {
                 email: "",
                 pwd: ""
             },
-            err: ""
+            err: "",
+            scoreList: []
         }
     }
     componentDidMount() {
-        const isLogged = localStorage.getItem("loggedIn") ? true : false;
+        const isLogged = localStorage.getItem("user") ? true : false;
+        this.props.toggleSignIn(isLogged);
         this.setState({
             isUserLoggedIn: isLogged
         })
@@ -28,7 +32,7 @@ class UserPortal extends Component {
         })
     }
     validate = () => {
-        const emailReg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const emailReg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (!emailReg.test(this.state.user.email)) {
             this.setState({ err: "invalid email" })
             return false
@@ -56,6 +60,10 @@ class UserPortal extends Component {
                         this.setState({
                             isUserLoggedIn: true
                         })
+                        console.log("respJSON.data", respJSON.data);
+                        localStorage.setItem("user",
+                            JSON.stringify(respJSON.data))
+                        this.props.toggleSignIn(true);
                     } else {
                         this.setState({
                             err: respJSON.msg
@@ -65,11 +73,45 @@ class UserPortal extends Component {
                 })
         }
     }
+    logout = () => {
+        localStorage.removeItem("user");
+        this.setState({
+            isUserLoggedIn: false
+        })
+        this.props.toggleSignIn(false)
+    }
     render() {
         return (
             <div className="col-4">
                 {this.state.isUserLoggedIn ?
-                    <div>score board</div> :
+                    <div>
+                        <header>Score Board</header>
+                        <table className="table">
+                            <thead className="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Score</th>
+                                    <th scope="col">When</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.props.scoreList.map((item, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <th scope="row">{index + 1}</th>
+                                            <td>{item.score}</td>
+                                            <td>
+                                                <Moment interval={0} format="YYYY/MM/DD HH:mm">
+                                                    {item.createdOn}
+                                                </Moment>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                        <button onClick={() => this.logout()}>log out</button>
+                    </div> :
                     <div>
                         <header>Sign in/ Sign up</header>
                         <form className="text-left">

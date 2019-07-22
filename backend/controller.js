@@ -2,12 +2,12 @@ const userModel = require('./models/Users');
 const scoreModel = require('./models/Scores');
 
 function getUserModel(user) {
-    const user = new userModel({
+    const _user = new userModel({
         _id: new mongoose.Types.ObjectId(),
         emailId: user.email,
         password: user.pwd
     });
-    return user
+    return _user
 }
 module.exports.signInUser = function (req, res) {
     const userLoginCred = req.body;

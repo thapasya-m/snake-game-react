@@ -101,7 +101,8 @@ class UserPortal extends Component {
                                             <th scope="row">{index + 1}</th>
                                             <td>{item.score}</td>
                                             <td>
-                                                <Moment interval={0} format="MMM, DD YYYY HH:mm:ss">
+                                                <Moment interval={0}
+                                                    format="MMM, DD YYYY HH:mm:ss">
                                                     {item.createdOn}
                                                 </Moment>
                                             </td>

@@ -16,7 +16,7 @@ class UserPortal extends Component {
         }
     }
     componentDidMount() {
-        const isLogged = localStorage.getItem("user") ? true : false;
+        const isLogged = localStorage.getItem("userEmailId") ? true : false;
         this.props.toggleSignIn(isLogged);
         this.setState({
             isUserLoggedIn: isLogged
@@ -56,13 +56,13 @@ class UserPortal extends Component {
                     return response.json()
                 }).then(respJSON => {
                     console.log(respJSON)
-                    if (respJSON.data) {
+                    if (respJSON.emailId) {
                         this.setState({
                             isUserLoggedIn: true
                         })
-                        console.log("respJSON.data", respJSON.data);
-                        localStorage.setItem("user",
-                            JSON.stringify(respJSON.data))
+                        console.log("respJSON.data", respJSON.emailId);
+                        localStorage.setItem("userEmailId",
+                            respJSON.emailId)
                         this.props.toggleSignIn(true);
                     } else {
                         this.setState({
@@ -74,7 +74,7 @@ class UserPortal extends Component {
         }
     }
     logout = () => {
-        localStorage.removeItem("user");
+        localStorage.removeItem("emailId");
         this.setState({
             isUserLoggedIn: false
         })
@@ -101,7 +101,7 @@ class UserPortal extends Component {
                                             <th scope="row">{index + 1}</th>
                                             <td>{item.score}</td>
                                             <td>
-                                                <Moment interval={0} format="YYYY/MM/DD HH:mm">
+                                                <Moment interval={0} format="MMM, DD YYYY HH:mm:ss">
                                                     {item.createdOn}
                                                 </Moment>
                                             </td>

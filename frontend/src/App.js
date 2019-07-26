@@ -14,10 +14,9 @@ class App extends Component {
 
   getUserScoreBoard(isLoggedIn) {
     if (isLoggedIn) {
-      const user = localStorage.getItem("user");
-      if (user) {
-        const parsedUser = JSON.parse(user)
-        fetch(config.BASE_API + "/score/" + parsedUser.id + "/" + parsedUser.emailId,
+      const emailId = localStorage.getItem("userEmailId");
+      if (emailId) {
+        fetch(config.BASE_API + "/score/" + emailId,
           {
             method: "GET",
             headers: {
@@ -54,8 +53,10 @@ class App extends Component {
   render() {
     return (
       <div className="App container row">
-        <SnakeGame addNewScore={(score) => this.getNewScore(score)} />
-        <UserPortal scoreList={this.state.scoreList}
+        <SnakeGame
+          addNewScore={(score) => this.getNewScore(score)} />
+        <UserPortal
+          scoreList={this.state.scoreList}
           toggleSignIn={(flag) => this.getUserScoreBoard(flag)} />
       </div>
     );

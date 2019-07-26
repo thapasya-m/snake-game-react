@@ -1,7 +1,7 @@
 const mongoose = require('../db-connector');
 
 const userSchema = new mongoose.Schema({
-    id: Number,
+    _id: mongoose.Types.ObjectId,
     emailId: String,
     password: String
 });

@@ -55,11 +55,10 @@ class SnakeGame extends Component {
         return true
     }
     storeScore() {
-        const user = localStorage.getItem("user");
-        if (user) {
+        const emailId = localStorage.getItem("userEmailId");
+        if (emailId) {
             const data = {
-                id: user.id,
-                emailId: user.emailId,
+                emailId: emailId,
                 score: this.state.score
             }
             fetch(config.BASE_API + "/score",

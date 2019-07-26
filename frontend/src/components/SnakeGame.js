@@ -30,7 +30,8 @@ class SnakeGame extends Component {
                 y: 0
             },
             score: 0,
-            isPaused: false
+            isPaused: false,
+            isWalled: false
         }
     }
     componentDidMount() {
@@ -115,7 +116,7 @@ class SnakeGame extends Component {
         }
     }
     movingSlow() {
-        const { currentDirection, frogPosition, isPaused } = this.state;
+        const { currentDirection, frogPosition, isPaused, isWalled } = this.state;
         setTimeout(() => {
             this.clearCanvas();
             this.justDraw(frogPosition, "green");
@@ -165,16 +166,16 @@ class SnakeGame extends Component {
         }
     }
     didSnakeDie() {
-        const { snake } = this.state
+        const { snake, isWalled } = this.state
         const head = { x: snake[0].x, y: snake[0].y }
         for (let i = 4; i < snake.length; i++) {
             if (snake[i].x === head.x && snake[i].y === head.y) {
                 return true
             }
         }
-        // if (this.didSnakeHitWall(head)) {
-        //     return true
-        // }
+        if (isWalled && this.didSnakeHitWall(head)) {
+            return true
+        }
 
         return false
     }
@@ -259,6 +260,12 @@ class SnakeGame extends Component {
             isPaused: !_isPaused
         })
     }
+    toggleStage = () => {
+        let _isWalled = this.state.isWalled
+        this.setState({
+            isWalled: !_isWalled
+        })
+    }
     componentDidUpdate(prevProps, prevState, snapshot) {
         if ((this.state.isPaused !== prevState.isPaused)
             && !this.state.isPaused) {
@@ -266,7 +273,7 @@ class SnakeGame extends Component {
         }
     }
     render() {
-        const { isPaused, score } = this.state;
+        const { isPaused, score, isWalled } = this.state;
         return (
             <div className="col-8">
                 <header className="">
@@ -277,8 +284,14 @@ class SnakeGame extends Component {
                     id="snake_board" width="300" height="300">
                 </canvas>
                 <aside>Score: {score}</aside>
-                <button onClick={() => this.toggleGame()}>
-                    {!isPaused ? "Pause" : "Resume"}</button>
+                <div className="container d-flex justify-content-between col-6">
+                    <button className="btn btn-primary " onClick={() => this.toggleGame()}>
+                        {!isPaused ? "Pause" : "Resume"}</button>
+                    <button className="btn btn-success"
+                        onClick={() => this.toggleStage()}>
+                        {isWalled ? "Down the wall!" : "Walls up!"}</button>
+
+                </div>
             </div>
         );
     }

@@ -131,20 +131,20 @@ class SnakeGame extends Component {
                 this.drawSnake();
                 if (this.state.score > 0)
                     this.storeScore();
-                if (window.confirm("You lost with " + this.state.score + " point(s). Click ok to restart.")) {
-                    this.setState({
-                        score: 0,
-                        snake: [
-                            { x: 150, y: 150 },
-                            { x: 140, y: 150 },
-                            { x: 130, y: 150 },
-                            { x: 120, y: 150 }
-                        ]
-                    });
-                    this.clearCanvas();
-                    this.createFrog();
-                    this.movingSlow();
-                }
+                window.alert("You lost with " + this.state.score + " point(s).")
+                this.setState({
+                    score: 0,
+                    snake: [
+                        { x: 150, y: 150 },
+                        { x: 140, y: 150 },
+                        { x: 130, y: 150 },
+                        { x: 120, y: 150 }
+                    ]
+                });
+                this.clearCanvas();
+                this.createFrog();
+                this.movingSlow();
+
             }
         }, 300);
     }

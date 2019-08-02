@@ -27,8 +27,9 @@ module.exports.addNewScore = async function (req, res) {
     console.log("userData", userData);
     try {
         const response = await getUserByEmailId(userData.emailId);
-        const scoreModel = getScoreModel(response, userData.score)
-        const scoreResponse = await createScore(scoreModel);
+        const score = getScoreModel(response, userData.score)
+        const sc = await scoreModel.find({ score: score.score });
+        const scoreResponse = await createScore(score);
         res.status(200).send({ data: scoreResponse })
     } catch (err) {
         console.log("err catch", err.message)
@@ -87,10 +88,11 @@ function verifyUser(data) {
 }
 function getScoreByUserId(id) {
     return new Promise(function (resolve, reject) {
-        scoreModel.find({ userId: id }).sort({ score: -1 }).
+        scoreModel.find({ userId: id }).sort({ score: -1 }).limit(10).
             exec(function (err, response) {
                 if (err) reject(new Error(err))
-                if (response.length === 0) reject(new Error('No score by given user.'))
+                if (response.length === 0)
+                    reject(new Error('No score by given user.'))
                 else resolve(response)
             })
     })

@@ -28,11 +28,15 @@ module.exports.addNewScore = async function (req, res) {
     try {
         const response = await getUserByEmailId(userData.emailId);
         const score = getScoreModel(response, userData.score)
-        const sc = await scoreModel.find({ score: score.score });
-        const scoreResponse = await createScore(score);
-        res.status(200).send({ data: scoreResponse })
+        const sc = await ifScoreExists(score);
+        if(!sc){
+            const scoreResponse = await createScore(score);
+            res.status(200).send({ data: scoreResponse })
+        }else
+        res.status(200).send({ data: sc })
+            
     } catch (err) {
-        console.log("err catch", err.message)
+        console.log("err catch1", err)
         res.status(500).send({ msg: err.message });
     }
 }
@@ -43,9 +47,20 @@ module.exports.getScoreByUser = async function (req, res) {
         let scoreResponse = await getScoreByUserId(response._id);
         res.status(200).send({ data: scoreResponse })
     } catch (error) {
-        console.log("err catch", error.message)
+        console.log("err catch2", error)
         res.status(500).send({ msg: error.message });
     }
+}
+function ifScoreExists(model){
+    return new Promise(function(resolve, reject){
+        scoreModel.findOne({
+             score: model.score,
+              userId: model.userId },
+               function(err, score){
+                if (err) reject(new Error(err))
+                else resolve(score);
+        });
+    });
 }
 function createScore(score) {
     return new Promise(function (resolve, reject) {

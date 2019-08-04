@@ -44,9 +44,13 @@ class App extends Component {
 
   }
 
-  getNewScore = (score) => {
+  getNewScore = (newScore) => {
+    const scoreArr = this.state.scoreList.filter(function(score, index){
+      return score.score === newScore.score;
+    })
+    if(scoreArr.length===0)
     this.setState({
-      scoreList: [...this.state.scoreList, score]
+      scoreList: [...this.state.scoreList, newScore]
     })
   }
 

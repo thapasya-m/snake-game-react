@@ -116,7 +116,7 @@ class SnakeGame extends Component {
         }
     }
     movingSlow() {
-        const { currentDirection, frogPosition, isPaused, isWalled } = this.state;
+        const { currentDirection, frogPosition, isPaused } = this.state;
         setTimeout(() => {
             this.clearCanvas();
             this.justDraw(frogPosition, "green");

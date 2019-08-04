@@ -111,7 +111,7 @@ class UserPortal extends Component {
                                 })}
                             </tbody>
                         </table>
-                        <button className="btn btn-light" onClick={() => this.logout()}>log out</button>
+                        <button className="btn btn-outline-info" onClick={() => this.logout()}>log out</button>
                     </div> :
                     <div>
                         <header>Sign in/ Sign up</header>

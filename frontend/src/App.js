@@ -12,6 +12,9 @@ class App extends Component {
     }
   }
 
+
+
+  
   getUserScoreBoard(isLoggedIn) {
     if (isLoggedIn) {
       const emailId = localStorage.getItem("userEmailId");

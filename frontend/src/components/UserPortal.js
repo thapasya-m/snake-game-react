@@ -1,33 +1,34 @@
-import React, { Component } from 'react'
-import * as config from '../settings'
 import Moment from 'react-moment';
+import React, { Component } from 'react';
+import * as config from '../settings';
 
 class UserPortal extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             isUserLoggedIn: false,
             user: {
                 email: "",
                 pwd: ""
             },
-            err: "",
-            scoreList: []
-        }
+            err: ""
+        };
     }
+
     componentDidMount() {
         const isLogged = localStorage.getItem("userEmailId") ? true : false;
         this.props.toggleSignIn(isLogged);
         this.setState({
             isUserLoggedIn: isLogged
-        })
+        });
     }
+    
     handleChange = (e) => {
         const input = e.target;
-        let _user = this.state.user;
-        _user[input.name] = input.value;
+        let usr = this.state.user;
+        usr[input.name] = input.value;
         this.setState({
-            user: _user,
+            user: usr,
             err: ""
         })
     }
@@ -74,7 +75,7 @@ class UserPortal extends Component {
         }
     }
     logout = () => {
-        localStorage.removeItem("emailId");
+        localStorage.removeItem("userEmailId");
         this.setState({
             isUserLoggedIn: false
         })

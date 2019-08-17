@@ -25,10 +25,10 @@ class UserPortal extends Component {
     
     handleChange = (e) => {
         const input = e.target;
-        let usr = this.state.user;
-        usr[input.name] = input.value;
+        let _usr = this.state.user;
+        _usr[input.name] = input.value;
         this.setState({
-            user: usr,
+            user: _usr,
             err: ""
         })
     }
